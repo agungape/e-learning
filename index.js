@@ -1,11 +1,14 @@
 const express = require ("express");
 const mysql = require ("mysql");
 
+
 const app = express()
+
 
 //buat koneksi ke database
 var db = mysql.createConnection({
     host : "localhost",
+    database : "kodeta",
     user : "root",
     password : ""
 })
@@ -14,23 +17,21 @@ var db = mysql.createConnection({
 db.connect(function(err){
     if (err) throw err;
     console.log("Connected!");
+
+    //get data dari database
+    app.get("/product", (req, res) =>{
+        const sql = "SELECT * FROM product"
+
+        db.query(sql, (err, result) =>{
+            console.log(err)
+            console.log("hasil database = ", result)
+            const product = JSON.parse(JSON.stringify(result))
+            res.json({data : product})
+        })
+
+    })
 })
 
-
-// var db = mysql.createConnection({
-//     host: "localhost",
-//     user: "dian",
-//     password: "kopi"
-// });
-
-// db.connect(function(err) {
-//     if (err) throw err;
-//     console.log("Connected!");
-// });
-
-app.get("/", (request, response) => {
-    response.send ("OK")
-})
 
 app.listen(3000, () => {
     console.log("server siap");
