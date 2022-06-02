@@ -34,7 +34,7 @@ db.connect(function(err){
     // Membuat Endpoint dengan params id
     app.delete("/product/:id", (req, res) => {
 
-        // Mengambil query params id product yang di pass 
+        // Mengambil params id product yang di pass 
         const id = req.params.id
 
         // Membuat query delete product by id
@@ -48,7 +48,7 @@ db.connect(function(err){
             if(err){
                 res.status(500)
                     .json({message: "Server error", status : res.statusCode})
-                    
+
             }else{ // jika request ke database tidak ada error
 
                 // Memparse / mengubah data menjadi JSON Object
