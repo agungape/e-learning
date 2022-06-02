@@ -46,8 +46,9 @@ db.connect(function(err){
 
             // Mengecek jika ada error dari query database
             if(err){
-
-            
+                res.status(500)
+                    .json({message: "Server error", status : res.statusCode})
+                    
             }else{ // jika request ke database tidak ada error
 
                 // Memparse / mengubah data menjadi JSON Object
