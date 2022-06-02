@@ -30,9 +30,47 @@ db.connect(function(err){
         })
 
     })
+
+    // Membuat Endpoint dengan params id
+    app.delete("/product/:id", (req, res) => {
+
+        // Mengambil query params id product yang di pass 
+        const id = req.params.id
+
+        // Membuat query delete product by id
+        const sql = "DELETE FROM product WHERE id = ?"    // ? sebagai tanda tempat nilai akan di input
+        const values = [id]  // nilai yang akan menggantikan tanda ? ,  nilai harus disimpan dalam array []
+
+        // proses query ke database dengan argument yang diberikan yaitu (sql, nilai, callback)
+        db.query(sql, values, (err, result) => {
+
+            // Mengecek jika ada error dari query database
+            if(err){
+
+            
+            }else{ // jika request ke database tidak ada error
+
+                // Memparse / mengubah data menjadi JSON Object
+                let hasil = JSON.parse(JSON.stringify(result))
+            
+                // Mengecek apakah ada baris yang terkena efek/effect DELETE dan TIDAK ADA warning
+                if(hasil.affectedRows > 0 && hasil.warningCount == 0){
+                    res.status(200)
+                    .json({message: "Data berhasil dihapus.", status : res.statusCode})
+
+                }else{
+                    res.status(404)
+                    .json({message: "Data tidak ditemukan.", status : res.statusCode})
+                }
+            }
+
+            
+        })
+
+    })
 })
 
 
 app.listen(3000, () => {
-    console.log("server siap");
+    console.log("server siap port 3000");
 })
