@@ -24,7 +24,6 @@ db.connect(function(err){
 
         db.query(sql, (err, result) =>{
             console.log(err)
-            console.log("hasil database = ", result)
             const product = JSON.parse(JSON.stringify(result))
             res.json({data : product})
         })
@@ -69,9 +68,43 @@ db.connect(function(err){
         })
 
     })
+
+    app.get("/product/:id", (req, res) => {
+
+        //mengambil params id product yg di pass
+        const id = req.params.id
+
+        //membuat query get data product by id
+        const sql = "SELECT * FROM product WHERE id = ?"  // ? sebagai tanda tempat nilai akan di input 
+
+        // nilai yang akan menggantikan tanda ? ,  nilai harus disimpan dalam array []
+        const values = [id] 
+        
+
+        //execute data
+        db.query(sql, values, (err, result) => {
+            if (err) {
+                res.status(500)
+                json({message: "Server error", status : statusCode})
+                console.log("error", err)
+            }else{
+                //mengubah data menjadi JSON Object
+                const product = JSON.parse(JSON.stringify(result))
+                res.json({data : product})
+
+                // if(values){
+                //     res.status(200)
+                //     .json({data : product})
+                // }else{
+                //     res.status(404)
+                //     .json({message: "Data tidak ditemukan.", status : res.statusCode})
+                // }
+            }
+        })  
+    })
 })
 
 
 app.listen(3000, () => {
-    console.log("server siap port 3000");
+    console.log("server siap port 3000")
 })
