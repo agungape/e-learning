@@ -20,15 +20,38 @@ db.connect(function(err){
 
     //get data dari database
     app.get("/product", (req, res) =>{
-        const sql = "SELECT * FROM product"
+        // console.log(req.query.limit);
+        
+        const limit = parseInt(req.query.limit);
+        let page = parseInt(req.query.page);
+        page = (isNaN(page))? 1 : page;
 
-        db.query(sql, (err, result) =>{
-            console.log(err)
-            const product = JSON.parse(JSON.stringify(result))
-            res.json({data : product})
-        })
+        if(limit) {
+            // limit 2
+            // page = offset
+            // 1 = 0 => dimulai data ke 1
+            // 2 = 2 => dimulai data ke 3
+            // 3 = 4 => dimulai data ke 5
+
+            // Pola => (page * limit) - limit
+            const offset = (page * limit) - limit;
+
+            const sql = "SELECT * FROM product LIMIT ? OFFSET ?";
+            const values = [limit, offset];
+    
+            db.query(sql, values, (err, result) =>{
+                console.log(err)
+                const product = JSON.parse(JSON.stringify(result))
+                res.json({message: "Success", status:res.statusCode, data : product})
+            })
+
+        }else{
+            res.status(400)
+            .json({message:"Must be have query params 'limit'", status: res.statusCode})
+        }
 
     })
+
 
     // Membuat Endpoint dengan params id
     app.delete("/product/:id", (req, res) => {
