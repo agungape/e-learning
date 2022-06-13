@@ -1,8 +1,13 @@
 const express = require ("express");
 const mysql = require ("mysql");
+const bodyParser = require("body-parser");
+
+
 
 
 const app = express()
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json())
 
 
 //buat koneksi ke database
@@ -92,6 +97,8 @@ db.connect(function(err){
 
     })
 
+    //membuat endpoint berdsarkan id
+
     app.get("/product/:id", (req, res) => {
 
         //mengambil params id product yg di pass
@@ -124,6 +131,29 @@ db.connect(function(err){
                 // }
             }
         })  
+    })
+
+    //membuat endpoint tambah_product
+    app.post("/product", (req, res) => {
+        const nama_product = req.body.nama;
+        const harga = req.body.harga;
+        const deskripsi = req.body.deskripsi;        
+        console.log(nama_product, harga, deskripsi);
+        //query
+        const sql = "INSERT INTO product (product_name, price, description) VALUES (?,?,?)" 
+        const values = [nama_product, harga, deskripsi]
+
+        //exceute perintah
+        db.query(sql, values, (err, result) => {
+            if (err) {
+                res.status(500)
+                console.log("error", err)
+            }else{
+                //mengubah data menjadi JSON Object
+                res.json({message : "data berhasil di tambahkan"})
+            }
+        })  
+        
     })
 })
 
